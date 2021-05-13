@@ -9,6 +9,7 @@ export const createApiClient = (
 ) => {
   const request = async <T = any>(path: string, method = "GET", body: any) => {
     const url = baseUrl + path;
+    console.log("🚀 | url", url);
     const token = await ensureToken();
     let reqOpts: RequestInit = {
       method,

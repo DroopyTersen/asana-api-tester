@@ -14,8 +14,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   let queryParams = new URLSearchParams(querystring);
   let path = queryParams.get("path");
   let method = queryParams.get("method") || "GET";
+  let pat = queryParams.get("pat");
   let body = queryParams.get("body");
-  let data = path ? await asanaRequest(path, method, body) : null;
+  let data = path
+    ? await asanaRequest(path, method, body).catch((err) => err)
+    : null;
 
   return {
     id: querystring,
@@ -37,7 +40,7 @@ interface TestResult {
 const HISTORY_CACHE_KEY = "asana-api-test-history";
 export default function () {
   let routeData = useRouteData<TestResult>();
-
+  let [pat, setPat] = usePersistedState<string>("", "asana-pat");
   let [history, setHistory] = usePersistedState<TestResult[]>(
     [],
     HISTORY_CACHE_KEY
@@ -67,11 +70,24 @@ export default function () {
       </div>
       <div>
         <form method="get">
+          {/* <div>
+            <label>
+              Personal Access Token
+              <br />
+              <input
+                name="pat"
+                id="pat"
+                value={pat}
+                onChange={(e) => setPat(e.target.value)}
+                style={{ marginBottom: "10px", width: "100%" }}
+              />
+            </label>
+          </div> */}
           <div style={{ display: "flex" }}>
             <div style={{ marginRight: "10px" }}>
               <label htmlFor="method">Method</label>
               <br />
-              <select name="method" defaultValue={routeData.method}>
+              <select name="method" defaultValue={routeData.method} id="method">
                 <option>GET</option>
                 <option>POST</option>
                 <option>PUT</option>
@@ -82,6 +98,7 @@ export default function () {
               <label htmlFor="path">API Path</label>
               <br />
               <input
+                id="path"
                 name="path"
                 placeholder="/workspaces"
                 defaultValue={routeData.path}
@@ -96,7 +113,13 @@ export default function () {
           </div>
         </form>
         <div>
-          <pre style={{ padding: "5px", background: "#eee" }}>
+          <pre
+            style={{
+              padding: "5px",
+              background: "#eee",
+              whiteSpace: "pre-wrap",
+            }}
+          >
             {JSON.stringify(routeData.data, null, 2)}
           </pre>
         </div>
