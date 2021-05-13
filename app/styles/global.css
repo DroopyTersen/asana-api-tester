@@ -1,0 +1,21 @@
+:focus:not(:focus-visible) {
+  outline: none;
+}
+html * {
+  position: relative;
+  box-sizing: border-box;
+}
+body {
+  font-family: sans-serif;
+}
+
+footer {
+  text-align: center;
+  color: #ccc;
+  padding-top: 80px;
+}
+
+input,
+select {
+  padding: 3px;
+}
